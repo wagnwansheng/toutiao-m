@@ -3,11 +3,14 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 // 加载全局样式
-import './styles/index.less'
+import './styles/icon.less'
 // 加载vant组件库
 import Vant from 'vant'
 // 加载vant组件库样式
 import 'vant/lib/index.css'
+// 加载rem配置
+import 'amfe-flexible'
+import './styles/index.less'
 
 // 全局注册vant中组件
 Vue.use(Vant)
