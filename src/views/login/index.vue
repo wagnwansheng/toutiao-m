@@ -7,7 +7,7 @@
       @click-left="onClickLeft"
     />
     <!-- 登录表单 -->
-    <van-form show-error-message >
+    <van-form @submit="onLogin" >
       <van-field
         v-model="user.mobile"
         icon-prefix="toutiao-m"
@@ -15,7 +15,7 @@
         placeholder="请输入手机号"
         :rules="[
           { required: true, message: '请输入手机号' },
-          { pattern: /^1[3|5|7|8]\d{9}/, message: '请输入正确的手机号格式' }
+          { pattern: /^1[3|5|7|8]\d{9}$/, message: '请输入正确的手机号格式' }
         ]"
       />
       <van-field
@@ -27,7 +27,7 @@
         placeholder="请输入短信验证码"
         :rules="[
           { required: true, message: '请输入验证码' },
-          { pattern: /\d{6}/, message: '请输入正确的验证码格式' }
+          { pattern: /^\d{6}$/, message: '请输入正确的验证码格式' }
         ]"
       >
         <template #button>
