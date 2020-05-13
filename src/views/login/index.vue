@@ -7,7 +7,7 @@
       @click-left="onClickLeft"
     />
     <!-- 登录表单 -->
-    <van-form >
+    <van-form show-error-message >
       <van-field
         v-model="user.mobile"
         icon-prefix="toutiao-m"
@@ -45,6 +45,7 @@
 
 <script>
 import { login } from '@/api/user'
+import { Toast } from 'vant'
 
 export default {
   name: 'LoginIndex',
@@ -73,6 +74,12 @@ export default {
       this.$router.back()
     },
     async onLogin () {
+      Toast.loading({
+        message: '登录中...',
+        forbidClick: true,
+        loadingType: 'spinner',
+        duration: 0
+      })
       // 1 招到数据接口
       // 2 封装请求方法
       // 3 请求调用登录
@@ -80,8 +87,10 @@ export default {
         const res = await login(this.user)
         // 4 处理响应结果
         console.log(res)
+        Toast.success('登录成功')
       } catch (err) {
-        console.log('登录失败', err)
+        console.log(err)
+        Toast.fail('登录失败')
       }
     }
   }
