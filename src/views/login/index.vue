@@ -7,9 +7,9 @@
       @click-left="onClickLeft"
     />
     <!-- 登录表单 -->
-    <van-form @submit="onSubmit">
+    <van-form >
       <van-field
-        v-model="user.name"
+        v-model="user.mobile"
         icon-prefix="toutiao-m"
         left-icon="shouji"
         placeholder="请输入手机号"
@@ -35,7 +35,7 @@
         </template>
       </van-field>
       <div style="margin:26px 16px;">
-        <van-button block type="info" native-type="submit">
+        <van-button block type="info"  @click="onLogin">
           登录
         </van-button>
       </div>
@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import { login } from '@/api/user'
+
 export default {
   name: 'LoginIndex',
   components: {
@@ -53,7 +55,7 @@ export default {
   data () {
     return {
       user: {
-        name: '',
+        mobile: '',
         code: ''
       }
     }
@@ -67,11 +69,20 @@ export default {
   mounted () {
   },
   methods: {
-    onClickLeft () {
+    async onClickLeft () {
       this.$router.back()
     },
-    onSubmit (values) {
-      console.log('submit', values)
+    async onLogin () {
+      // 1 招到数据接口
+      // 2 封装请求方法
+      // 3 请求调用登录
+      try {
+        const res = await login(this.user)
+        // 4 处理响应结果
+        console.log(res)
+      } catch (err) {
+        console.log('登录失败', err)
+      }
     }
   }
 }
