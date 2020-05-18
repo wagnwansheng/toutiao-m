@@ -39,15 +39,27 @@
           { pattern: /^\d{6}$/, message: '请输入正确的验证码格式' }
         ]"
       >
+      <!-- 发送验证码 -->
         <template #button>
+          <!-- 倒计时 -->
+          <van-count-down
+          :time="60 * 1000"
+          format="ss s"
+          v-if="isCountDownShow"
+          @finish='isCountDownShow = false'
+          />
           <van-button
             class="van-button_code"
-            size="small" round type="primary"
+            size="small"
+            round
             @click.prevent="onSendSms"
-            :rules= []
+            v-else
+            :loading="isSendsmsShow"
+            loading-text="加载中..."
           >发送验证码</van-button>
         </template>
       </van-field>
+      <!-- 登录按钮 -->
       <div style="margin:26px 16px;">
         <van-button block type="info"  @click="onLogin">
           登录
@@ -58,7 +70,7 @@
 </template>
 
 <script>
-import { login } from '@/api/user'
+import { login, sendSms } from '@/api/user'
 import { Toast } from 'vant'
 
 export default {
@@ -72,7 +84,10 @@ export default {
       user: {
         mobile: '',
         code: ''
-      }
+      },
+      // 倒计时的显示隐藏
+      isCountDownShow: false,
+      isSendsmsShow: false
     }
   },
   computed: {
@@ -115,18 +130,30 @@ export default {
         })
       }
     },
-    // 验证码倒计时
+    // 短信验证码倒计时
     async onSendSms () {
       try {
+        this.isSendsmsShow = true
         await this.$refs['login-form'].validate('mobile')
-        console.log('发送成功')
+        const res = await sendSms(this.user.mobile)
+        this.isCountDownShow = true
+        console.log(res)
       } catch (err) {
-        console.log(err)
+        let message = ''
+        if (err && err.response && err.response.status === 429) {
+          message = '发送频繁，请稍后重试'
+        } else if (err.name === 'mobile') {
+          message = err.message
+        } else {
+          message = '未知的错误'
+        }
+        // console.dir(err)
         this.$toast({
-          message: err.message,
+          message,
           position: 'top'
         })
       }
+      this.isSendsmsShow = false
     }
   }
 }
