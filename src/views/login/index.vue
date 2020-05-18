@@ -113,10 +113,12 @@ export default {
       // 2 封装请求方法
       // 3 请求调用登录
       try {
-        const res = await login(this.user)
+        const { data } = await login(this.user)
         // 4 处理响应结果
-        console.log(res)
         Toast.success('登录成功')
+
+        // 将后端返回的用户状态（token等数据）放到Vuex容器中
+        this.$store.commit('setUser', data.data)
       } catch (err) {
         console.log(err)
         Toast.fail('登录失败')
