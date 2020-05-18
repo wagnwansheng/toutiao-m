@@ -7,12 +7,20 @@
       @click-left="onClickLeft"
     />
     <!-- 登录表单 -->
-    <van-form @submit="onLogin" >
+    <van-form
+    ref="login-form"
+    @submit="onLogin"
+    :validate-first='true'
+    :show-error='false'
+    :show-error-message='false'
+    @failed='onFailed'
+    >
       <van-field
         v-model="user.mobile"
         icon-prefix="toutiao-m"
         left-icon="shouji"
         placeholder="请输入手机号"
+        name="mobile"
         :rules="[
           { required: true, message: '请输入手机号' },
           { pattern: /^1[3|5|7|8]\d{9}$/, message: '请输入正确的手机号格式' }
@@ -25,13 +33,19 @@
         center
         clearable
         placeholder="请输入短信验证码"
+        name="code"
         :rules="[
           { required: true, message: '请输入验证码' },
           { pattern: /^\d{6}$/, message: '请输入正确的验证码格式' }
         ]"
       >
         <template #button>
-          <van-button class="van-button_code" size="small" round type="primary">发送验证码</van-button>
+          <van-button
+            class="van-button_code"
+            size="small" round type="primary"
+            @click.prevent="onSendSms"
+            :rules= []
+          >发送验证码</van-button>
         </template>
       </van-field>
       <div style="margin:26px 16px;">
@@ -91,6 +105,27 @@ export default {
       } catch (err) {
         console.log(err)
         Toast.fail('登录失败')
+      }
+    },
+    async onFailed (error) {
+      if (error.errors[0]) {
+        this.$toast({
+          message: error.errors[0].message,
+          position: 'top'
+        })
+      }
+    },
+    // 验证码倒计时
+    async onSendSms () {
+      try {
+        await this.$refs['login-form'].validate('mobile')
+        console.log('发送成功')
+      } catch (err) {
+        console.log(err)
+        this.$toast({
+          message: err.message,
+          position: 'top'
+        })
       }
     }
   }
